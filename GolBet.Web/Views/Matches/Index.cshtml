@@ -3,6 +3,7 @@
 @using GolBet.Entities.Enums
 
 @using GolBet.Web.Helpers
+@using System.Linq
 
 @model IEnumerable<GolBet.Services.DTOs.MatchDto>
 
@@ -15,12 +16,31 @@
 @{
 
     var current = (MatchStatus?)ViewBag.CurrentStatus;
+    var search = ViewBag.Search as string;
 
 }
+
+<form asp-action="Index" method="get" class="mb-4">
+    <div class="input-group" style="max-width: 500px;">
+        <input type="text"
+               name="search"
+               value="@ViewBag.Search"
+               class="form-control"
+               placeholder="Buscar equipo..." />
+
+        <button type="submit" class="btn btn-success">
+            Buscar
+        </button>
+    </div>
+</form>
+
+
+
 
 <div class="d-flex gap-2 flex-wrap mb-4">
 
     <a asp-action="Index"
+    asp-route-search="@search"
        class="btn btn-sm @(current is null ? "btn-success" : "btn-outline-success")">
 
         Todos
@@ -28,6 +48,8 @@
     </a>
 
     <a asp-action="Index" asp-route-status="@MatchStatus.Scheduled"
+
+    asp-route-search="@search"
        class="btn btn-sm @(current == MatchStatus.Scheduled ? "btn-success" : "btn-outline-success")">
 
         Programados
@@ -35,6 +57,8 @@
     </a>
 
     <a asp-action="Index" asp-route-status="@MatchStatus.InProgress"
+ 
+    asp-route-search="@search"
        class="btn btn-sm @(current == MatchStatus.InProgress ? "btn-success" : "btn-outline-success")">
 
         En juego
@@ -42,6 +66,8 @@
     </a>
 
     <a asp-action="Index" asp-route-status="@MatchStatus.Finished"
+ 
+    asp-route-search="@search"
        class="btn btn-sm @(current == MatchStatus.Finished ? "btn-success" : "btn-outline-success")">
 
         Finalizados
@@ -53,12 +79,24 @@
   
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>⚽ Cartelera de partidos</h2>
-    <a asp-action="Create" class="btn btn-success">+ Nuevo partido</a>
+ 
+    @if (User.IsInRole("Admin")) 
+
+{ 
+
+    <a asp-action="Create" class="btn btn-success">+ Nuevo partido</a> 
+
+} 
 </div>
 
-  
 
+
+ @if (Model.Any())
+{
 <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+
+
+
 
     @foreach (var match in Model)
 
@@ -97,12 +135,9 @@
                             <span class="badge bg-secondary">Finalizado</span>
 
                             break;
-
                     }
-
                 </div>
-
-  
+           
 
                 <div class="card-body">
 
@@ -213,3 +248,27 @@
     }
 
 </div> 
+ }
+ else
+{
+    <div class="text-center py-5">
+        <h4 class="text-muted">No se encontraron partidos</h4>
+
+        @if (!string.IsNullOrWhiteSpace(search))
+        {
+            <p>
+                No encontramos partidos para
+                <strong>@search</strong>
+                con el filtro seleccionado.
+            </p>
+        }
+        else
+        {
+            <p>No hay partidos disponibles para este filtro.</p>
+        }
+
+        <a asp-action="Index" class="btn btn-success mt-2">
+            Volver a todos los partidos
+        </a>
+    </div>
+}

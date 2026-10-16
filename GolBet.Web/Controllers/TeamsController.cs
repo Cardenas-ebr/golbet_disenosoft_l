@@ -1,14 +1,11 @@
-﻿// GolBet.Web/Controllers/TeamsController.cs 
-
+﻿// GolBet.Web/Controllers/TeamsController.cs
 using GolBet.Services.DTOs;
-
 using GolBet.Services.Interfaces;
-
 using Microsoft.AspNetCore.Mvc;
 
 
-
 namespace GolBet.Web.Controllers;
+
 
 
 
