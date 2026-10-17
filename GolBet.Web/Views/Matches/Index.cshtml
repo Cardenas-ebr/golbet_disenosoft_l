@@ -32,7 +32,16 @@
             Buscar
         </button>
     </div>
+    @if (ViewBag.CurrentStatus != null)
+{
+    <input type="hidden"
+           name="status"
+           value="@ViewBag.CurrentStatus" />
+}
 </form>
+
+
+
 
 
 

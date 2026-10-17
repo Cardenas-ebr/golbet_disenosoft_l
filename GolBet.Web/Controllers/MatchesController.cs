@@ -20,27 +20,17 @@ public class MatchesController : Controller
 
     // GET /Matches            -> all matches
     // GET /Matches?status=Scheduled -> filtered board
+
     public async Task<IActionResult> Index(MatchStatus? status, string? search)
     {
         ViewBag.CurrentStatus = status;
         ViewBag.Search = search;
-        var board = await _matchService.GetBoardAsync(status);
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            board = board
-                .Where(m =>
-                    (m.HomeTeamName?.Contains(
-                        search,
-                        StringComparison.OrdinalIgnoreCase) ?? false)
-                    ||
-                    (m.AwayTeamName?.Contains(
-                        search,
-                        StringComparison.OrdinalIgnoreCase) ?? false))
-                .ToList();
-        }
+
+        IEnumerable<MatchDto> board = await _matchService.GetBoardAsync(status, search);
 
         return View(board);
     }
+
 
     // GET /Matches/Detail/3
     public async Task<IActionResult> Detail(int id)
