@@ -56,8 +56,14 @@ public class MatchRepository : GenericRepository<Match>, IMatchRepository
         return await query.OrderBy(m => m.Date).ToListAsync();
     }
 
-    public Task<Match?> GetByIdWithDetailsAsync(int id)
+    public async Task<Match?> GetByIdWithDetailsAsync(int id)
     {
-        throw new NotImplementedException();
+        return await _dbSet
+            .Include(m => m.HomeTeam)
+            .Include(m => m.AwayTeam)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(m => m.Id == id);
     }
+
+
 }
